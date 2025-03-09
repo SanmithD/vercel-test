@@ -16,6 +16,9 @@ app.use(
 );
 app.use(express.json());
 app.use("/api/info", postRouter);
+app.get('/',(req, res)=>{
+    res.send("Hello world");
+})
 
 app.listen(process.env.PORT || 2004, () => {
   console.log(`server running on PORT ${process.env.PORT}`);
