@@ -1,12 +1,25 @@
 import mongoose from "mongoose";
 
-const connectDB = async() =>{
-    try {
-        const connectionDB = await mongoose.connect(process.env.MONGO_URI || process.env.COMPASS );
-        console.log(connectionDB.connection.host)
-    } catch (error) {
-        console.log(error)
-    }
-} 
+let isConnected = false;
 
-export default connectDB
+const connectDB = async () => {
+  if (isConnected) {
+    console.log('Using existing database connection');
+    return;
+  }
+
+  try {
+    const connectionDB = await mongoose.connect(process.env.MONGO_URI || process.env.COMPASS, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+      serverSelectionTimeoutMS: 5000, 
+    });
+    
+    isConnected = true;
+    console.log(`MongoDB connected: ${connectionDB.connection.host}`);
+  } catch (error) {
+    console.error('MongoDB connection error:', error);
+  }
+};
+
+export default connectDB;
