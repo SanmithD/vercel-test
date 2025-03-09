@@ -7,7 +7,9 @@ import postRouter from './routes/post.route.js';
 const app = express();
 
 connectDB();
-app.use(cors());
+app.use(cors({
+    origin: process.env.FRONT_URL
+}));
 app.use(express.json())
 app.use('/api/info', postRouter);
 
