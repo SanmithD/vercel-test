@@ -38,11 +38,34 @@ function App() {
   };
 
   const getAllData = async () => {
-    try {
-      const response = await axios.get(`${import.meta.env.VITE_PORT}/api/info/get`);
-      setInfoData(response.data.response || []);
-    } catch (error) {
-      console.log(error);
+    const MAX_RETRIES = 3;
+    let retryCount = 0;
+    
+    const fetchData = async () => {
+      try {
+        const response = await axios.get(`${import.meta.env.VITE_PORT}/api/info/get`, {
+          timeout: 15000 
+        });
+        setInfoData(response.data.response || []);
+        return true; 
+      } catch (error) {
+        if (error.code === 'ERR_BAD_RESPONSE' && error.response?.status === 504) {
+          if (retryCount < MAX_RETRIES) {
+            retryCount++;
+            console.log(`Attempt ${retryCount}/${MAX_RETRIES} failed. Retrying...`);
+            await new Promise(resolve => setTimeout(resolve, 1000 * Math.pow(2, retryCount - 1)));
+            return false; 
+          }
+        }
+        
+        console.error("Failed to fetch data:", error.message);
+        return true; 
+      }
+    };
+    
+    let completed = false;
+    while (!completed && retryCount <= MAX_RETRIES) {
+      completed = await fetchData();
     }
   };
 
