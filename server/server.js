@@ -9,7 +9,7 @@ const app = express();
 connectDB();
 app.use(
   cors({
-    origin: process.env.FRONT_URL,
+    origin: [ process.env.FRONT_URL || 'https://vercel-test-user.vercel.app' ],
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     credentials: true,
   })
