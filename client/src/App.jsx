@@ -22,7 +22,11 @@ function App() {
     try {
       const response = await axios.post(
         `${import.meta.env.VITE_PORT}/api/info/post`,
-        formData
+        formData, {
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        }
       );
       alert("Submitted successfully!");
       getAllData();
